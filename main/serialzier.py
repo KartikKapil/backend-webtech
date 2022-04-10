@@ -32,10 +32,18 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 class CustomerSerializer(serializers.ModelSerializer):
-    user = UserSerializer(required=True)
+    user  = UserSerializer(required=True)
     class Meta:
         model = Customer
         fields = '__all__'
+    
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user = UserSerializer.create(UserSerializer(),validated_data=user_data)
+        customer = Customer(user=user,Total_payble_amount = validated_data.pop('Total_payble_amount'),is_vendor = validated_data.pop('is_vendor'))
+        customer.save()
+
+        return customer
 
 
 class ProductSerializer(serializers.ModelSerializer):
