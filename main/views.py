@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import permissions, status
 from rest_framework.decorators import (api_view, permission_classes)
+
+from main.models import Product
 from .serialzier import CustomerSerializer, ProductSerializer, OrderSerializer, UserSerializer
 from rest_framework.response import Response
 
@@ -31,7 +33,13 @@ def Add_product(request):
     })
 
 @api_view(['GET'])
-def get_all_products(request):
+def Get_all_products(request):
+    all_products = Product.objects.all()
+    serializer = ProductSerializer(all_products, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def Make_purchase(request):
     pass
 
 def Home(request):
