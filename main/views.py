@@ -46,10 +46,15 @@ def Make_purchase(request):
     customer = Customer.objects.get(user=current_user)
     products = request.data['products']
     print(products)
+    total_order_value = 0
     for product in products:
         current_product = Product.objects.get(name=product['name'])
+        total_order_value += current_product.price
         order = Order(customer=customer, product=current_product, date_ordered=datetime.datetime.now(),status = 'PENDING')
         order.save()
+    
+    customer.Total_payble_amount += total_order_value
+    customer.save()
     return Response(status=status.HTTP_201_CREATED)
 
 def Home(request):
