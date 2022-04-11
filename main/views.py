@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import permissions, status
 from rest_framework.decorators import (api_view, permission_classes)
-
-from main.models import Product
+from django.contrib.auth.models import User
+from main.models import Product, Customer, Order
 from .serialzier import CustomerSerializer, ProductSerializer, OrderSerializer, UserSerializer
 from rest_framework.response import Response
+import datetime 
 
 
 @api_view(['POST'])
@@ -40,7 +41,21 @@ def Get_all_products(request):
 
 @api_view(['POST'])
 def Make_purchase(request):
-    pass
+    username = request.data['username']
+    current_user = User.objects.get(username=username)
+    customer = Customer.objects.get(user=current_user)
+    products = request.data['products']
+    print(products)
+    total_order_value = 0
+    for product in products:
+        current_product = Product.objects.get(name=product['name'])
+        total_order_value += current_product.price
+        order = Order(customer=customer, product=current_product, date_ordered=datetime.datetime.now(),status = 'PENDING')
+        order.save()
+    
+    customer.Total_payble_amount += total_order_value
+    customer.save()
+    return Response(status=status.HTTP_201_CREATED)
 
 def Home(request):
     return HttpResponse("<h1>basic page setup</h1>")

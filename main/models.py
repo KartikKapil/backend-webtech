@@ -22,5 +22,3 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer,null=True, on_delete=models.SET_NULL)
     date_ordered = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20,default= 'PENDING')
-    def __str__(self):
-        return self.name
