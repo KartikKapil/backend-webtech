@@ -57,7 +57,25 @@ def Make_purchase(request):
     customer.save()
     return Response(status=status.HTTP_201_CREATED)
 
+@api_view(['POST'])
+def return_product(request):
+    name_of_product = request.data['name']
+    product = Product.objects.get(name=name_of_product)
+    serializer = ProductSerializer(product)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def return_orders(request):
+    name_of_user = request.data['username']
+    user = User.objects.get(username=name_of_user)
+    customer = Customer.objects.get(user=user)
+    orders = Order.objects.filter(customer=customer)
+    products = orders.product
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+
 def Home(request):
-    return HttpResponse("<h1>basic page setup</h1>")
+    return HttpResponse("<h1>Kindly use api </h1>")
 
 # Create your views here.

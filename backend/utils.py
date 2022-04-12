@@ -1,4 +1,3 @@
-from matplotlib.style import context
 from main.models import Customer
 from main.serialzier import CustomerSerializer
 
